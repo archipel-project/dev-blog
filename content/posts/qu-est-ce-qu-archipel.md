@@ -6,14 +6,10 @@ categories = ["presentation"]
 tags = ["what-is"]
 +++
 
-**Archipel** est un projet visant à implémenter un serveur Minecraft de manière plus optimisée et rapide, en Rust.
+**Archipel** est un projet visant à implémenter un serveur Minecraft de manière plus optimisée et rapide.
 
 <!--more-->
 
-# Pourquoi Rust ?
-
-[Rust](https://www.rust-lang.org) est un un des choix les plus pertinants lorsque l'on s'intéresse à la performance et la sécurité des fonctionnalitées. Nous avons choisi Rust afin d'avoir un langage rapide et sécurisé pour le développement de ce projet.
-
 # Pourquoi le nom Archipel ?
 
-**TODO**
+Le nom **Archipel** vient du fait que le projet est contitué d'une multitude de micro-services (ce qui ressemble à un archipel d'îles) qui fonctionnent main dans la main.
