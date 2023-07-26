@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
 /* defines light color */
 :root {
   --color-light-bg-page: #EBEBEB;
@@ -236,7 +238,7 @@ body {
 /* setup hyper link style */
 .header .site-title {
   text-decoration: none;
-  font-family: var(--fonts-serif);
+  font-family: Roboto, Arial, Helvetica, sans-serif;
   font-size: var(--font-size-6);
   font-weight: bold;
 }
