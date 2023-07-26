@@ -1,4 +1,6 @@
 baseURL = 'http://example.org/'
-languageCode = 'en-us'
-title = 'My New Hugo Site'
-theme = "ananke"
+languageCode = 'fr-FR'
+title = 'Archipel - Dev Blog'
+theme = "flat"
+
+staticDir = ["assets"]
