@@ -1,6 +1,53 @@
-baseURL = 'http://example.org/'
-languageCode = 'fr-FR'
+baseURL = 'http://archipel-project.github.io/'
+languageCode = 'en-US'
 title = 'Archipel - Dev Blog'
 theme = "flat"
 
+enableRobotsTXT = true
+paginate = 4
 staticDir = ["assets"]
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+
+[permalinks]
+[permalinks.section]
+posts = "/posts/"
+tags = "/tags/"
+categories = "/categories/"
+
+[params]
+mainSections = ['posts']
+
+# you can set multi row of footers like these
+[[params.footer_rows]]
+[[params.footer_rows.items]]
+name = "MIT License"
+url = "https://opensource.org/license/MIT/"
+pre = "Copyright <a href=\"https://opensource.org/license/MIT/\">MIT</a> 2023"
+
+[[params.footer_rows.items]]
+name = "Hugo"
+url = "https://gohugo.io"
+pre = "Powered by <a href=\"https://gohugo.io\">Hugo</a>"
+
+[[params.footer_rows.items]]
+name = "theme flat"
+url = "https://cgit.leafee98.com/hugo-theme-flat.git"
+pre = "Theme <a href=\"https://git.leafee98.com/leafee98/hugo-theme-flat.git\">hugo-theme-flat</a>"
+
+[[menus.main]]
+name = "Posts"
+url = "/posts/"
+weight = 30
+
+[[menus.main]]
+name = "Categories"
+url = "/categories/"
+weight = 40
+
+[[menus.main]]
+pageref = "about"
+name = "About"
+weight = 80

@@ -2,8 +2,8 @@
 title = "Qu'est-ce qu'Archipel ?"
 author = "ViiipeR"
 date = "2023-07-26"
-categories = ["presentation"]
-tags = ["what-is"]
+categories = ["news"]
+tags = ["what-is", "news"]
 +++
 
 **Archipel** est un projet visant à implémenter un serveur Minecraft de manière plus optimisée et rapide.
