@@ -1,12 +1,16 @@
 <div class="side-categories">
-    <h2>Categories</h2>
-    <hr />
+	<h2>
+		{{ with .Site.GetPage "section" "categories" }}
+			<a href="{{ .RelPermalink }}">Categories</a>
+		{{ end }}
+	</h2>
+	<hr/>
 
-    <ul>
-        {{ range $key, $_ := .Site.Taxonomies.categories }}
-            <li>
-                <a href="{{ "categories/" | relURL }}{{ $key | urlize }}">{{ $key }}({{ .Count }})</a>
-            </li>
-        {{ end }}
-    </ul>
+	<ul>
+		{{ range $key, $_ := .Site.Taxonomies.categories }}
+			<li>
+				<a href="{{ " categories/" | relURL }}{{ $key | urlize }}">{{ $key }}({{ .Count }})</a>
+			</li>
+		{{ end }}
+	</ul>
 </div>
