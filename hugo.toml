@@ -37,6 +37,7 @@ name = "theme flat"
 url = "https://cgit.leafee98.com/hugo-theme-flat.git"
 pre = "Theme <a href=\"https://git.leafee98.com/leafee98/hugo-theme-flat.git\">hugo-theme-flat</a>"
 
+
 [[menus.main]]
 name = "Posts"
 url = "/posts/"
@@ -46,8 +47,3 @@ weight = 30
 name = "Categories"
 url = "/categories/"
 weight = 40
-
-[[menus.main]]
-pageref = "about"
-name = "About"
-weight = 80
