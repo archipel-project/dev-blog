@@ -8,8 +8,15 @@
 
 	<ul>
 		{{ range first 5 .RegularPages.ByDate.Reverse }}
-			<li>
-				<a href="{{ .RelPermalink }}">{{ .Title }}</a>
+			<li class="recent-item">
+				<a href="{{ .RelPermalink }}">
+					<p class="title">
+						{{ .Title }}
+					</p>
+					<p class="date">
+						<time class="date" datetime="{{ .PublishDate }}">{{ .PublishDate.Format "2006/01/02" }}</time>
+					</p>
+				</a>
 			</li>
 		{{ end }}
 	</ul>

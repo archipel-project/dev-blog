@@ -6,6 +6,7 @@ theme = "flat"
 enableRobotsTXT = true
 paginate = 4
 staticDir = ["assets"]
+include_toc = true
 
 [taxonomies]
 category = "categories"
