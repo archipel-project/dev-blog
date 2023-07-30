@@ -614,7 +614,7 @@ body {
 
 .single .tip,
 .single .taxonomies {
-	color: var(--color-fg-font-normal);
+	color: var(--color-fg-font-quote);
 }
 
 .single .taxonomies > * {
