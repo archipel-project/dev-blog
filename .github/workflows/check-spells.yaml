@@ -85,8 +85,6 @@ jobs:
         unknown_word_limit: 2
         extra_dictionaries:
           cspell:software-terms/src/software-terms.txt
-        only: |
-          (?:^|/)content/(.*)\.md$
 
 
   comment-push:
