@@ -4,6 +4,7 @@ author = "Bricklou"
 date = "2023-07-26"
 categories = ["news"]
 tags = ["what-is", "news"]
+description = "We are starting a new project: a Minecraft server written in Rust!"
 
 [banner]
 image = "minecraft_ingame_screenshot.png"
@@ -16,6 +17,8 @@ all the server in Rust.
 Why? Because we can. And because we want to learn Rust and how Minecraft works.
 
 So, let us present you our project: **Archipel Project** !
+
+<!--more-->
 
 # What is Archipel Project?
 
@@ -31,7 +34,7 @@ Yes, it will! It need to stay compatible with the official client! We are also t
 
 # When will it be ready?
 
-We don't know. At the time of writing this post, we haven't even started to writing the code. We are still in the design phase, where some parts still
+We don't know. At the time to write this post, we haven't even started to writing the code. We are still in the design phase, where some parts still
 needs some clarification and where some of us are still learning Rust. We will try to keep you updated on the progress of the project.
 
 # So, what's this blog about?
@@ -42,7 +45,7 @@ our experience and all the accumulated knowledge by publishing scientific articl
 # How can I help?
 
 You can help us by sharing this blog and our project with your friends, or by contributing to the project. We will soon publish a list of issues
-that need to be done, so you can pick one and start working on it. We will also publish a list of features we want to implement, so you can
+we must work on, so you can pick one and start working on it. We will also publish a list of features we want to implement, so you can
 pick one and start working on it too.
 
 # Conclusion
