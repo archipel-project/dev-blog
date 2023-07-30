@@ -33,6 +33,10 @@ name: Check Spelling
 #
 #   For background, see: https://github.com/check-spelling/check-spelling/wiki/Feature:-Update-with-deploy-key
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   push:
     branches:
