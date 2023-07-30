@@ -23,7 +23,7 @@ So, let us present you our project: **Archipel Project**!
 
 Like we said, it is a Minecraft server written in Rust. The goal is to have a server that is fast, secure and (almost) easy to use.
 
-It will be built on a microservice architecture, with a lot of small services that will communicate with each other's: some will store the world data,
+It will be built on a microservice architecture, with a lot of small services that will communicate with each other: some will store the world data,
 some will run the logic, and others will handle the player connections and authentication.
 
 We will try to make it as modular as possible, so you can use only the services you need.
