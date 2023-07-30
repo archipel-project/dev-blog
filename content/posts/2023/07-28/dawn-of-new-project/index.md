@@ -1,7 +1,7 @@
 +++
 title = "The dawn of a new project"
 author = "Bricklou"
-date = "2023-07-26"
+date = "2023-07-28"
 categories = ["news"]
 tags = ["what-is", "news"]
 description = "We are starting a new project: a Minecraft server written in Rust!"
