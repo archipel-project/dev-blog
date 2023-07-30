@@ -6,6 +6,7 @@ theme = "flat"
 enableRobotsTXT = true
 paginate = 4
 staticDir = ["assets"]
+include_toc = true
 
 [taxonomies]
 category = "categories"
@@ -35,7 +36,12 @@ pre = "Powered by <a href=\"https://gohugo.io\">Hugo</a>"
 [[params.footer_rows.items]]
 name = "theme flat"
 url = "https://cgit.leafee98.com/hugo-theme-flat.git"
-pre = "Theme <a href=\"https://git.leafee98.com/leafee98/hugo-theme-flat.git\">hugo-theme-flat</a>"
+pre = "Theme based on <a href=\"https://git.leafee98.com/leafee98/hugo-theme-flat.git\">hugo-theme-flat</a>"
+
+[[params.footer_rows.items]]
+name = "GitHub"
+url = "https://github.com/Archipel-Project"
+pre = "<a href=\"https://github.com/Archipel-Project\">GitHub <i class=\"icon-github\"></i></a>"
 
 [[menus.main]]
 name = "Posts"
@@ -46,8 +52,3 @@ weight = 30
 name = "Categories"
 url = "/categories/"
 weight = 40
-
-[[menus.main]]
-pageref = "about"
-name = "About"
-weight = 80

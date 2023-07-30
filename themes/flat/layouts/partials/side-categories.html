@@ -1,7 +1,10 @@
 <div class="side-categories">
 	<h2>
 		{{ with .Site.GetPage "section" "categories" }}
-			<a href="{{ .RelPermalink }}">Categories</a>
+			<a href="{{ .RelPermalink }}">
+				<i class="icon-folder-tree"></i>
+				Categories
+			</a>
 		{{ end }}
 	</h2>
 	<hr/>

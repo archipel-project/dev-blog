@@ -98,7 +98,7 @@
 }
 
 :root {
-	--fonts-sans-en: "Roboto", "Noto Sans", "Droid Sans", "Calibri", "Arial";
+	--fonts-sans-en: "Noto Sans", "Droid Sans", "Calibri", "Arial";
 	--fonts-sans-zh: "WenQuanYi Zen Hei", "WenQuanYi Micro Hei", "Noto Sans CJK",
 		"Microsoft YaHei", "PingFang SC";
 	--fonts-sans: var(--fonts-sans-en), var(--fonts-sans-zh), sans-serif;
@@ -267,7 +267,7 @@ body {
 /* .header-wrapper, .footer { width: 100vw; } */
 .header-wrapper,
 .footer {
-	width: 100vw;
+	width: 100%;
 }
 .main-wrapper {
 	width: calc(100vw - 2 * var(--len-3));
@@ -553,6 +553,16 @@ body {
 	margin: var(--len-1) var(--len-1);
 }
 
+.side-recent .recent-item .title {
+	margin: 0;
+}
+
+.side-recent .recent-item .date {
+	margin: 0;
+	color: var(--color-fg-font-quote);
+	font-size: var(--font-size-1);
+}
+
 /*****************************/
 /* set up single post layout */
 /*****************************/
@@ -561,6 +571,11 @@ body {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+}
+
+.single figure,
+.single img {
+	width: 100%;
 }
 
 .single a {
@@ -599,7 +614,7 @@ body {
 
 .single .tip,
 .single .taxonomies {
-	color: var(--color-fg-font-normal);
+	color: var(--color-fg-font-quote);
 }
 
 .single .taxonomies > * {

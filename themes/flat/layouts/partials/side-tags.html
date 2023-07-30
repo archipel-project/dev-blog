@@ -1,7 +1,10 @@
 <div class="side-tags">
 	<h2>
 		{{ with .Site.GetPage "section" "tags" }}
-			<a href="{{ .RelPermalink }}">Tags</a>
+			<a href="{{ .RelPermalink }}">
+				<i class="icon-tags"></i>
+				Tags
+			</a>
 		{{ end }}
 	</h2>
 	<hr/>
