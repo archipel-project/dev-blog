@@ -1,7 +1,7 @@
 +++
 title = "The dawn of a new project"
-author = "Bricklou"
-date = "2023-07-28"
+author = "Bricklou, D3lta"
+date = "2023-09-27"
 categories = ["news"]
 tags = ["what-is", "news"]
 description = "We are starting a new project: a Minecraft server written in Rust!"
@@ -21,16 +21,25 @@ So, let us present you our project: **Archipel Project**!
 
 # What is Archipel Project?
 
-Like we said, it is a Minecraft server written in Rust. The goal is to have a server that is fast, secure and (almost) easy to use.
+Like we said, it is a Minecraft server written in Rust. The goal is to have a server fast, secure and (almost) easy to use.
 
-It will be built on a microservice architecture, with a lot of small services that will communicate with each other: some will store the world data,
+But is it just another Minecraft server? Can it compete with big servers like Spigot or Paper? Well, no. At least, not at the beginning.
+but we have more than one trick up our sleeves to make it better than the others.
+starting by a full rewrite in rust, which will make it faster and more secure than the others java alternatives.
+more data oriented patterns, like ECS, will also make it faster, more scalable and easier to extend than the traditional OOP patterns used by the others servers. See https://github.com/SanderMertens/ecs-faq for more details!
+
+Wait but Valence and feather already have these kind of features, why not use them instead of writing a new server?
+
+Archipel also target a more distributed work over nodes, It will be built on a microservice architecture, with a lot of small services that will communicate with each other: some will store the world data,
 some will run the logic, and others will handle the player connections and authentication.
 
 We will try to make it as modular as possible, so you can use only the services you need.
 
 # Will it still be compatible with Minecraft?
 
-Yes, it will! It needs to stay compatible with the official client! We are also thinking about supporting the Bedrock client too, but it is not our priority.
+Yes, it will! It needs to stay compatible with the official and latest java client! We are also thinking about supporting the Bedrock client too, but it is not our priority.
+To support multiple clients version, and server side modding, we are thinking of using a layer Item translation, some mod or plugin already do that, like ViaVersion or polymer (https://polymer.pb4.eu/latest/),
+but we want to push the concept further, and make it more generic, so it can be used by any mod or plugin.
 
 # When will it be ready?
 
