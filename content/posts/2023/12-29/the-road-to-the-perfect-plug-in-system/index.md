@@ -118,16 +118,32 @@ preventing us from doing any possible abstraction in our code.
 Both Rust and C ABI allow to get a reference over any object passed by the core. It means we can iterate over components from our ECS without **any** copy! This is an excellent point, a allow us to write very efficient plugins.
 But as shown above, this also means a nightmare for us and plugins developers to implement anything.
 
-# Rust the 3rd round, using WASM, a bit slower but good enough, or not ?
+# Third though: WASM? Is this worth it?
 
-Webassembly is a new kind of bytecode, designed to be close of native performances but way more portability, it can be compared to JAVA or C# bytecode, but more minimalistic. Wasm run in a browser when JavaScrip is too slow, or run with a dedicated runtime like Wastime or Wasmer.
-Wasm have very cool trade-off, its speed is between native speed and Luajit (the fastest Jit language), easy to use, the easiest to sand_box (it's designed for that), very cross-platform, stable ABI, and can import symbols from other plugins.
-calling a function in Wasm in very easy, at least with primitive... concurrently there is no offical way to pass complexe object from the host to the guest, but there is a hacky way to pass a pointer to the guest, and the guest can read/write to this pointer. This is not ideal, but it's the best we can do with wasm.
-Passing a complex object require some serialisation, which come with a big performance cost, and a lot of boilerplate code. It also requires a lot of handmade VM memory management, and mean for us, reimplementing the whole ECS in WasmTime VM memory, or copying each component to the vm memory during entity query, which also come with a cost.
+WebAssembly is a new kind of bytecode, designed to be close from native performances, but way more portable. We can compare it a more minimalistic version of the Java or C# bytecode.
+WASM runs in browsers when tasks requires performances where JavaScript is too slow, or in a dedicated runtime like Wasmtime or Wasmer.
 
--**fast: 2/5**, Wasm is fast, but the cost of serialisation and handmade VM memory management is very high -**sand-boxed: yes**, Wasm is designed for that -**easy to use: 0/5**, Wasm is very easy to use, but the handmade VM memory management is very tricky to implement (I have tried and almost jumped from the window) -**cross-platform: 5/5**, Wasm is designed for that -**stable ABI: 5/5**, Wasm is designed for that -**able to import symbols from other plugins: 2/5**, concurrently one of the best solutions we have seen so far, but still not perfect, complex object are very tricky to pass
+WebAssembly (WASM) offers a compelling trade-off with its performance falling between native speed and Luajit (the fastest JIT language). It offers an easy way to sandbox by design,
+is highly cross-platform, has a stable ABI, and allows for importing symbols from other plugins. Calling functions in WASM is very easy, at least, with primitive types...
+From the moment where you want to pass complex objects between the host and the guest, things get a bit more complicated. There is no official way to do this task cleanly.
+Of course, there are always hacky way to pass a pointer to the guest, and the guest can read/write to this pointer. This would provide a terrible developer experience, and would be very error prone.
+Passing complex objects requires some serialization, which comes with big performance costs and boilerplate code. It also requires a lot of handmade VM memory management and means, for us,
+to reimplemente the whole ECS in WasmTime VM memory, or copying each component to the VM memory during entity query, which also comes with a cost.
 
-[Feather](https://feathermc.org/) uses this approach, and they failed to implement it, because the heavy sand-boxing and handmade VM memory management is very tricky to implement, and come with a big performance cost. They also failed to implement the ECS in the VM memory, and they are copying each component to the VM memory during entity query, which also come with a big performance cost.
+| Criteria                      |  Note   | Summary                                                                                                                                               |
+| ----------------------------- | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fast                          |   2/5   | Yes, WASM is fast, but the serialization cost and handmade VM memory management is too high to even consider it.                                      |
+| Sand-boxed                    |   Yes   | It is by design!                                                                                                                                      |
+| Easy to use                   |   0/5   | WASM is very easy to use, but the handmade VM memory management is too tricky to implement. (I almost jumped from the Window)                         |
+| Cross-platform                | Runtime | It is by design!                                                                                                                                      |
+| Stable ABI                    |   Yes   | It is by design!                                                                                                                                      |
+| Cross-plugins symbols imports |   2/5   | While it is one of the better solutions we have seen so far, symbols management still poses challenges, especially when dealing with complex objects. |
+
+Projects like [Feather](https://feathermc.org/) uses this approach, but failed to implement it, because the heavy sand-boxing and handmade VM memory management.
+The trade-off related to the implementation and the performance cost is too high. They also failed to implement a proper ECS in the VM memory as they were copying each component to the VM memory
+during entity query, which also come with a big performance cost.
+
+Again, this is a big no for us.
 
 # Talking of bytecode, what about Java
 
