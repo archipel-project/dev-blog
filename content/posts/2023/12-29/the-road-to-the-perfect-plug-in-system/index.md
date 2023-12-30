@@ -145,25 +145,51 @@ during entity query, which also come with a big performance cost.
 
 Again, this is a big no for us.
 
-# Talking of bytecode, what about Java
+# Fourth though: speaking of bytecode, what about Java?
 
-Java (or any alternative running on the JVM like kotlin) is one of the most popular language today, and used to create Minecraft. It provides good speeds, portability, and the targeted community already used it
+Java (or any alternative running on the JVM like kotlin) is one of the most popular language today, and used to create Minecraft. It provides good speeds, portability,
+and the targeted community already used it
 
--**fast: 3/5**, Java is fast, but the OO with deep inheritance is not the best for cache coherency, and the memory management is not the best (Java is hungry for memory) -**sand-boxed: no**, I didn't see any way to sandbox java, because I find big issues for my use case, I didn't dig too much -**easy to use: 4/5**, java is very easy to use and to lean, JNI is also surprisingly easy to use -**cross-platform: 5/5**, java is designed for that -**stable ABI: 4/5**, provide some bytecode versions and securities for that -**able to import symbols from other plugins: 5/5**, allow symbol resolution at runtime, it mean it allow to import symbols from other plugins out of the box, this is the best solution we have seen so far -**bonus**, the Minecraft community already know it!
+| Criteria                      |  Note   | Summary                                                                                                                                                         |
+| ----------------------------- | :-----: | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fast                          |   3/5   | Java is fast, but the OO with deep inheritance is not the best for cache coherency, and the memory management is not the best. (Java is memory-hungry)          |
+| Sand-boxed                    |   No    | I didn't see any way to sandbox java, because I found big issues for my use case, I didn't dig too much                                                         |
+| Easy to use                   |   4/5   | Java is very easy to use and to learn, JNI is also surprisingly easy to use                                                                                     |
+| Cross-platform                | Runtime | Java is designed for that                                                                                                                                       |
+| Stable ABI                    |   Yes   | provide some bytecode versions and securities for that                                                                                                          |
+| Cross-plugins symbols imports |   5/5   | allow symbol resolution at runtime, which means it does allow symbols importation between plugins out of the box. This is the best solution we have seen so far |
+| _(Bonus)_                     |    -    | The Minecraft community already know it!                                                                                                                        |
 
-But java don't have any Native function pointer (each "function container") is a polymorphic object, making a huge overhead for our project.
-java don't support "inline classes", "primitives classes" or "structure" (call that like you want), I mean an in stack datastructures with compile time size, easy to put in array, making the ECS iteration very impractical.
-The [JEP402](https://openjdk.org/jeps/402) may change that.
+Java is a very good language, with a lot of interesting features, but it also come with some drawbacks. For example, the memory management, the lack of Native function pointer
+(each "function container" is a polymorphic object, making a huge overhead for our project), and the lack of "inline classes", "primitives classes" or "structure",
+call it the way you want, what i mean here is a in-stack data-structure with compile time size, easy to put in array, making the ECS iteration very impractical.
+The [JEP402](https://openjdk.org/jeps/402) might change that.
 
-# and what about java's little brother made by microsoft, C# ?
+# Final though: and Java's little brother made by Microsoft, C#?
 
-C# is a very good language, with a lot of good features, and a very good community, and come with very nice feature, like struct (in stack data object), references (with some kind of mutability control). Like java, C# run a VM, a single binary can be run everywhere while dotNet is available -**fast: 4/5**, C# is really fast, also comme with OO and deep inheritance, but you can also use struct and more functional programming -**sand-boxed: no**, I see some project talking about sand_boxing C#, but I didn't dig too much -**easy to use: 4.5/5**, C# is very easy to use and to learn, and the C# community is very active (-0.5 because I don't like PascalCase on Methods) -**cross-platform: 5/5**, C# can run the same binaries everywhere while dotNet is available (windows, linux, mac, on x86 or arm, arm64 with the anycpu target) -**stable ABI: 4/5**, stable across major version -**able to import symbols from other plugins: 5/5**, allow symbol resolution at runtime, it mean it allow to import symbols from other plugins out of the box, this is the best solution we have seen so far
+C# is a very good language, with good community, and very nice features like structures (in stack data object) or references (with some kind of mutability control).
+Like java, C# run a VM: a single binary can be run everywhere as long as .NET is available
 
-C# have "unmanaged struct" (struct with a fixed size, and no reference), which is very good for ECS and cache coherency, It looks like C# is the best solution so far,
-but C# suffers from the same problem as java, native function pointer are hard to get, but existent, a function can be declared as [UnmanagedCallersOnly] and can be called from a function pointer, but it's not very ergonomic, and require a lot of boilerplate code.
-I didn't find any way to use references from `hostfxr`, it may be tricky to iterate over ECS without any copy.
+| Criteria                      |  Note   | Summary                                                                                                                                 |
+| ----------------------------- | :-----: | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Fast                          |   4/5   | C# is really fast, also comme with OO and deep inheritance, but you can also use struct and more functional programming.                |
+| Sand-boxed                    |   No    | I see some project talking about sand_boxing C#, but I didn't dig too much.                                                             |
+| Easy to use                   |  4.5/5  | C# is very easy to use and to learn, and the C# community is very active (-0.5 because I don't like PascalCase on Methods).             |
+| Cross-platform                | Runtime | As outlined above, as long as .NET is available, binaries can run everywhere (Windows/Linux/Mac, x86/x64/Arm/Arm64).                    |
+| Stable ABI                    |   Yes   | stable across major version.                                                                                                            |
+| Cross-plugins symbols imports |   5/5   | Allow symbol resolution at runtime, which means symbols cross-importation out of the box. This is our best solution we have seen so far |
+
+C# have "unmanaged struct" (struct with a fixed size, and no reference), which is very good for ECS and cache coherency.
+Unfortunatly, C# suffers from the same issue as Java: native function pointer are hard to get, but existent. A function can be declared as `[UnmanagedCallersOnly]` and can be called from a function pointer. This is not very ergonomic, and require a lot of boilerplate code.
+
+I didn't find any way to use references from `hostfxr`, it might be tricky to iterate over ECS without any copy.
 Threading doesn't work out of the box but should be doable with some work!
 
-HostFxr is really minimalistic, it exposes at most 10 functions, we also looked to use Mono like the unity engine, but mono is slowly dying, and the mono community is not very active, mono is still stuck with C# 8.0 while dotNet is already at C# 12.0 !!
+HostFxr is really minimalistic, it exposes at most 10 functions. We also looked at Mono, which is used in the Unity engine, but the project is slowly dying, with an inactive community and
+stuck at C# 8.0 while .NET is already at C# 12.0 !
 
-At this time we are working to use C# as our language of choice, for modding! We are working on a C# library to make modding easier!
+# Conclusion
+
+We have explored many solutions, and obviously, none of them are perfect. We will have to make some compromises to keep the most suitable to our needs.
+At the time of writing this post, we are currently working on using C# as our language of choice for modding and are creating a C# library to simplify
+plugins creators life.
