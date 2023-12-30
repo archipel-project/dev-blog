@@ -65,30 +65,58 @@ will not be able to access it from another.
 
 To resume:
 
-| Criteria                      | Note | Summary                                                                                                                                                          |
-| ----------------------------- | :--: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fast                          | 2/5  | Lacks multithreading.                                                                                                                                            |
-| Sand-boxed                    | Yes  | Both provides sand-boxing capabilities.                                                                                                                          |
-| Easy to use                   | 3/5  | Looks easy to use, but might quickly become messy on large projects.                                                                                             |
-| Cross-platform                | Yes  | Can run literally everywhere.                                                                                                                                    |
-| Stable ABI                    | Yes  | _Nothing to comment_                                                                                                                                             |
-| Cross-plugins symbols imports | 3/5  | Interactions would be very tricky to implement, since Lua imports means executing it. Getting a function from another plugin would always result in a core call. |
+| Criteria                      |  Note   | Summary                                                                                                                                                          |
+| ----------------------------- | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fast                          |   2/5   | Lacks multithreading.                                                                                                                                            |
+| Sand-boxed                    |   Yes   | Both provides sand-boxing capabilities.                                                                                                                          |
+| Easy to use                   |   3/5   | Looks easy to use, but might quickly become messy on large projects.                                                                                             |
+| Cross-platform                | Runtime | Can run literally everywhere.                                                                                                                                    |
+| Stable ABI                    |   Yes   | _Nothing to comment_                                                                                                                                             |
+| Cross-plugins symbols imports |   3/5   | Interactions would be very tricky to implement, since Lua imports means executing it. Getting a function from another plugin would always result in a core call. |
 
 Why did I look for alternatives? Because Lua/wren are too primitive for our use case, and we can't rely on 25k lines of code written with it just to ensure everything run smootly.
 Others points like interactions with an ECS are very tricky to implement: a component is basically a static-sized and statically typed structure, and this notion doesn't exists at all in these
 languages due to their dynamic typing nature.
 
-# all try to fit rust in a plugin system, using dylib and laziness, I mean Rust ABI
+# Seconds though: Rust ABI using dylib
 
-Bevy uses this approach, and it's very easy to use, you just have to add a dependency to your Cargo.toml, and you can use it like any other rust library.
-The core of the project will be written in rust, and having a homogenous project looks like very conformable, no need to learn a new language, no need to learn a new build system, no need to learn a new IDE, etc.
-Compiled rust for native platform is the fastest option, we can also use multithreading, and any other more advanced features of rust. But we will lose some keypoint here: -**fast: 5/5**, [AOT](https://en.wikipedia.org/wiki/Ahead-of-time_compilation) is the fastest way to execute code, we are talking about 2x to 10x the speed of any other alternative. -**sand-boxed: no**, a DLL get the same level of permission as the server, it can access any file, it can crash the server, it can do anything the server can do, which is not ideal -**easy to use: 4/5**, rust is not the easiest language to learn, but it's not the hardest either, and it's very well documented, and will fit perfectly with the rest of the codebase! -**cross-platform: 1/5**, rust code is cross-platform, and can run on almost any platform, but need to be recompiled for each platform, and we can't use the same binary on different platform -**stable ABI: 0/5**, rust ABI is not stable, changing the flag of the compiler can change the padding of a structure, and break the ABI, plugin would need to be compiled with the same compiler, the same version of the compiler and the same flags, which is not ideal -**able to import symbols from other plugins: 2/5**, the nightmare start from here, importing symbols from other plugin isn't really a thing, the "host plugin" must expose an array of static void pointers to every desired functions, and the "guest plugin" must cast the void pointer to the desired function pointer, and call it. This is not ideal, and will result in a lot of boilerplate code, and a lot of unsafe code.
+Instead of using an external library, we though about just sticking with the current dynamic linking mechanism of Rust/C ABI.
+Bevy uses this approach, and is very easy to use. It only requires to add a dependency in your `cargo.yoml` and use it like any other rust libraries. In addition, compiled Rust for native platform
+is the fastest option in terms of execution speed, while offering multi-threading and many other advanced features from Rust.
 
-# Rust the 2nd round, using C ABI, a bit better but still far from perfect
+But, we will lose some key points here:
 
-This solution is really similar to the precedent, but using C abi instead of Rust ABI. This will solve problems of ABI stability, like being constrained to use the same compiler, the same version of the compiler and the same flags. But this come with a trade-off, more boilerplate code, and more unsafe code. to map all to a C ABI, we will need to use a lot of unsafe code, and we will need to use a lot of boilerplate code to map rust types to C types, and to map rust functions to C functions. We will also need to use a lot of unsafe code to call the C functions, and to cast the C types to rust types. This is not ideal, but it's the best we can do with C ABI. We can't even use a trait to abstract the function pointer, because the trait will be defined in the "host plugin", and the "guest plugin" will not be able to implement it. -**fast: 5/5**, same as the precedent -**sand-boxed: no**, same as the precedent -**easy to use: 3/5**, same as the precedent, but with more boilerplate code -**cross-platform: 2/5**, a bit better than the precedent, but we can still forget about using the same binary on different OS/cpu architectures -**stable ABI: 5/5**, we are using C ABI/FFI, which is perfectly stable -**able to import symbols from other plugins: 1/5** even worse than the precedent, we can't even use a trait to abstract the function pointer, because the trait will be defined in the "host plugin", and the "guest plugin" will not be able to implement it.
+| Criteria                      |     Note     | Summary                                                                                                                                                                                                                                                                                                                                                        |
+| ----------------------------- | :----------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fast                          |     5/5      | [AOT (Ahead of time)](https://en.wikipedia.org/wiki/Ahead-of-time_compilation) is the fastest way to execute code, we are talking about 2x to 10x the speed of any other alternative.                                                                                                                                                                          |
+| Sand-boxed                    |      No      | A DLL get the same level of permission as the server, it can access any file, it can crash the server, it can do anything the server can do, which is not ideal.                                                                                                                                                                                               |
+| Easy to use                   |     4/5      | Rust is not the easiest language to learn, but it's not the hardest either. It's very well documented, and would fit perfectly with the rest of the codebase!                                                                                                                                                                                                  |
+| Cross-platform                | Compile-time | Rust code is cross-platform at compile-tme, and can, accordingly, run on almost any platform. But, binaries need to be recompiled for each platform to ensure the support.                                                                                                                                                                                     |
+| Stable ABI                    |      No      | Rust ABI is not stable, changing a flag in the compiler can change the padding of a structure, and break the ABI: plugins would need to be compiled with the exact same compiler configuration.                                                                                                                                                                |
+| Cross-plugins symbols imports |     2/5      | And here start our nightmare: importing symbols from other plugins isn't really a thing, the "host" plugin must expose an array of static void pointers to every desired functions, and "guest" plugins must cast the void pointer to the desired function pointer and call it. This is not ideal at all and would result in a lot of unsafe boilerplate code. |
 
-Both of these solutions allow to get a reference over any object passed by the core, It means we can iterate over components of our ECS without any copy! This is a very good point, and will allow us to write very efficient plugins.
+As you can see, this is a big no since it doesn't comply at all to our needs.
+
+# Third though: what about C ABI?
+
+C ABI is the most stable ABI ever, it's the ABI used by both C and C++ languages. It's also the ABI used by the Rust language when using the `#[no_mangle]` attribute.
+Obviously, the solution is similar to the precedent, but the C ABI solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
+
+But, this also does come with a trade-off: even more unsafe and boilerplate code! To map everything to the C ABI, we would need to use a lot of unsafe code, and in consequence use a lot of boilerplate
+code to map Rust types and functions to their C equivalents. This is far from being ideal, but it's the best we can do with C ABI. Another issue is that the notion of trait would disappear completely,
+preventing us from doing any possible abstraction in our code.
+
+| Criteria                      |     Note     | Summary                                                                                                                                                      |
+| ----------------------------- | :----------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fast                          |     5/5      | Same as the precedent.                                                                                                                                       |
+| Sand-boxed                    |      No      | Same as the precedent.                                                                                                                                       |
+| Easy to use                   |     3/5      | Same as the precedent, but with more boilerplate code.                                                                                                       |
+| Cross-platform                | Compile-time | A bit better than the precedent, but we can still forget about using the same binary on different OS/CPU architectures.                                      |
+| Stable ABI                    |     Yes      | We are using C ABI/FFI, which is perfectly stable.                                                                                                           |
+| Cross-plugins symbols imports |     1/5      | Even worse than the precedent, we can't even use a trait to abstract the function pointer. "Guest" plugins wouldn't even be able to implement "Host" traits. |
+
+Both Rust and C ABI allow to get a reference over any object passed by the core. It means we can iterate over components from our ECS without **any** copy! This is an excellent point, a allow us to write very efficient plugins.
+But as shown above, this also means a nightmare for us and plugins developers to implement anything.
 
 # Rust the 3rd round, using WASM, a bit slower but good enough, or not ?
 
