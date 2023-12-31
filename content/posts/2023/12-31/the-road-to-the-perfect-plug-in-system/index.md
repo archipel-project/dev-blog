@@ -44,7 +44,7 @@ To meet our needs, a good plugin system would be:
   You can run the same mod independently on Windows, Linux and Mac, even on x86 and ARM.
 - **stable ABI** (Application Binary Interface): this is a must-have, plugins should be able to be compiled with different compilers (or version of a compiler)
   and keep the same output without breaking the ABI.
-- **symbols importation between plugins**: have a plugin is nice, but being able to interact with other plugins is even better. Plugins should be able
+- **symbols importation between plugins**: having plugins is nice, but being able to interact with other plugins is even better. Plugins should be able
   to import symbols from other plugins, like [loom](https://fabricmc.net/wiki/documentation:fabric_loom)'s `modimplementation`.
   Core mods align with the philosophy of the fabric modding community. They aim to avoid bloating the server core with excessive features, reducing the
   effort required for updates between versions. Additionally, core mods can optimize memory usage by limiting the number of loaded binaries in RAM.
@@ -53,11 +53,11 @@ Obviously, it is going to be hard, if not impossible to find a solution that mee
 
 In the following sections, we will explore some solutions we have considered, and why we didn't choose them.
 
-# First thoughts: Lua/wren
+# First thought: Lua/wren
 
 Like every other plugin system, we thought about using lua. It's a very popular language that is used in many games and is very easy to embed into C/C++ applications.
 
-The 2 mosts popular implementations are [LuaJit](https://luajit.org/) and [Wren](https://wren.io/). Wren is a little slower, but solves many problems from Lua, like the lack of classes or static typings.
+The 2 most popular implementations are [LuaJit](https://luajit.org/) and [Wren](https://wren.io/). Wren is a little slower, but solves many problems from Lua, like the lack of classes or static typings.
 
 Both are very lightweight and easy to use, sandbox-able but, they suffer from a big problem: they don't support any kind of multi-threading. Developers are forced to working inside a single thread or
 to work with multiples VM in parallel (Not the smartest idea, right?). This means that this is not an idea solution, since user can always store data on a specific VM, but
@@ -75,14 +75,15 @@ To resume:
 | Cross-plugins symbols imports |   3/5   | Interactions would be very tricky to implement, since Lua imports means executing it. Getting a function from another plugin would always result in a core call. |
 
 Why did I look for alternatives? Because Lua/wren are too primitive for our use case, and we can't rely on 25k lines of code written with it just to ensure everything run smoothly.
-Others points like interactions with an ECS are very tricky to implement: a component is basically a static-sized and statically typed structure, and this notion doesn't exists at all in these
+Other points like interactions with an ECS are very tricky to implement: a component is basically a static-sized and statically typed structure, and this notion doesn't exists at all in these
 languages due to their dynamic typing nature.
 
-# Seconds though: Rust ABI using dylib
+# Second thought: Rust ABI using dylib
 
-Instead of using an external library, we though about just sticking with the current dynamic linking mechanism of Rust/C ABI.
-Bevy uses this approach, and is very easy to use. It only requires to add a dependency in your `cargo.yaml` and use it like any other rust libraries. In addition, compiled Rust for native platform
-is the fastest option in terms of execution speed, while offering multi-threading and many other advanced features from Rust.
+Instead of using an external library, we thought about just sticking with the current dynamic linking mechanism of Rust/C ABI.
+Bevy uses this approach, and is very easy to use. Most of the time, it only requires to add a dependency in your `cargo.yaml` and use it like any other rust libraries,
+but if you want to avoid dependencies duplication, you have to warp it through functions pointers. In addition, compiled Rust for native platform
+is the fastest option in terms of execution speed, while offering multi-threading and many others advanced features from Rust.
 
 But, we will lose some key points here:
 
@@ -97,10 +98,10 @@ But, we will lose some key points here:
 
 As you can see, this is a big no since it doesn't comply at all to our needs.
 
-# Third though: what about C ABI?
+# Third thought: what about C ABI?
 
-C ABI is the most stable ABI ever, it's the ABI used by both C and C++ languages. It's also the ABI used by the Rust language when using the `#[no_mangle]` attribute.
-Obviously, the solution is similar to the precedent, but the C ABI solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
+C ABI is the most stable ABI ever, it's the ABI used by both C and C++ languages. It's also the ABI used by the Rust language when using the `extern` [specifier](https://doc.rust-lang.org/reference/items/external-blocks.html).
+Obviously, the solution is similar to the precedent, but using stable ABIs (such as C ABI or the system's one) solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
 
 But, this also does come with a trade-off: even more unsafe and boilerplate code! To map everything to the C ABI, we would need to use a lot of unsafe code, and in consequence use a lot of boilerplate
 code to map Rust types and functions to their C equivalents. This is far from being ideal, but it's the best we can do with C ABI. Another issue is that the notion of trait would disappear completely,
@@ -118,15 +119,15 @@ preventing us from doing any possible abstraction in our code.
 Both Rust and C ABI allow to get a reference over any object passed by the core. It means we can iterate over components from our ECS without **any** copy! This is an excellent point, a allow us to write very efficient plugins.
 But as shown above, this also means a nightmare for us and plugins developers to implement anything.
 
-# Third though: WASM? Is this worth it?
+# Third thought: WASM? Is this worth it?
 
-WebAssembly is a new kind of bytecode, designed to be close from native performances, but way more portable. We can compare it a more minimalist version of the Java or C# bytecode.
-WASM runs in browsers when tasks requires performances where JavaScript is too slow, or in a dedicated runtime like Wasmtime or Wasmer.
+WebAssembly is a new kind of bytecode, designed to be close from native performances, but way more portable. We can compare it a more minimalist version of the Java or C# bytecode, without a garbage collector.
+WASM runs in browsers when tasks require performances where JavaScript is too slow, or in a dedicated runtime like Wasmtime or Wasmer.
 
 WebAssembly (WASM) offers a compelling trade-off with its performance falling between native speed and LuaJit (the fastest JIT language). It offers an easy way to sandbox by design,
 is highly cross-platform, has a stable ABI, and allows for importing symbols from other plugins. Calling functions in WASM is very easy, at least, with primitive types...
 From the moment where you want to pass complex objects between the host and the guest, things get a bit more complicated. There is no official way to do this task cleanly.
-Of course, there are always hacky way to pass a pointer to the guest, and the guest can read/write to this pointer. This would provide a terrible developer experience, and would be very error prone.
+Of course, there are always hacky way to pass a pointer to the guest, and the guest can read/write to this pointer. This would provide a terrible developer experience, and would be very error-prone.
 Passing complex objects requires some serialization, which comes with big performance costs and boilerplate code. It also requires a lot of handmade VM memory management and means, for us,
 to reimplement the whole ECS in WasmTime VM memory, or copying each component to the VM memory during entity query, which also comes with a cost.
 
@@ -145,7 +146,7 @@ during entity query, which also come with a big performance cost.
 
 Again, this is a big no for us.
 
-# Fourth though: speaking of bytecode, what about Java?
+# Fourth thought: speaking of bytecode, what about Java?
 
 Java (or any alternative running on the JVM like Kotlin) is one of the most popular language today, and used to create Minecraft. It provides good speeds, portability,
 and the targeted community already used it
@@ -165,16 +166,16 @@ Java is a very good language, with a lot of interesting features, but it also co
 call it the way you want, what i mean here is a in-stack data-structure with compile time size, easy to put in array, making the ECS iteration very impractical.
 The [JEP402](https://openjdk.org/jeps/402) might change that.
 
-# Final though: and Java's little brother made by Microsoft, C#?
+# Final thought: and Java's little brother made by Microsoft, C#?
 
 C# is a very good language, with good community, and very nice features like structures (in stack data object) or references (with some kind of mutability control).
 Like java, C# run a VM: a single binary can be run everywhere as long as .NET is available
 
 | Criteria                      |  Note   | Summary                                                                                                                                 |
-| ----------------------------- | :-----: | --------------------------------------------------------------------------------------------------------------------------------------- |
+| ----------------------------- |:-------:|-----------------------------------------------------------------------------------------------------------------------------------------|
 | Fast                          |   4/5   | C# is really fast, also comme with OO and deep inheritance, but you can also use struct and more functional programming.                |
 | Sand-boxed                    |   No    | I see some project talking about sand_boxing C#, but I didn't dig too much.                                                             |
-| Easy to use                   |  4.5/5  | C# is very easy to use and to learn, and the C# community is very active (-0.5 because I don't like PascalCase on Methods).             |
+| Easy to use                   |   5/5   | C# is very easy to use and to learn, and the C# community is very active                                                                |
 | Cross-platform                | Runtime | As outlined above, as long as .NET is available, binaries can run everywhere (Windows/Linux/Mac, x86/x64/Arm/Arm64).                    |
 | Stable ABI                    |   Yes   | stable across major version.                                                                                                            |
 | Cross-plugins symbols imports |   5/5   | Allow symbol resolution at runtime, which means symbols cross-importation out of the box. This is our best solution we have seen so far |
@@ -186,7 +187,7 @@ I didn't find any way to use references from HostFXR, it might be tricky to iter
 Threading doesn't work out of the box but should be doable with some work!
 
 HostFXR is really minimalist, it exposes at most 10 functions. We also looked at Mono, which is used in the Unity engine, but the project is slowly dying, with an inactive community and
-stuck at C# 8.0 while .NET is already at C# 12.0 !
+stuck at C# 6.0 while (7.0 in progress) .NET is already at C# 12.0 !
 
 # Conclusion
 
