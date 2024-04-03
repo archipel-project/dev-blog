@@ -101,7 +101,7 @@ As you can see, this is a big no since it doesn't comply at all to our needs.
 # Third thought: what about C ABI?
 
 C ABI is the most stable ABI ever, it's the ABI used by both C and C++ languages. It's also the ABI used by the Rust language when using the `extern` [specifier](https://doc.rust-lang.org/reference/items/external-blocks.html).
-Obviously, the solution is similar to the precedent, but using stable ABIs (such as C ABI or the system's one) solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
+Obviously, the solution is similar to the precedent, but using stable ABI (such as C ABI or the system's one) solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
 
 But, this also does come with a trade-off: even more unsafe and boilerplate code! To map everything to the C ABI, we would need to use a lot of unsafe code, and in consequence use a lot of boilerplate
 code to map Rust types and functions to their C equivalents. This is far from being ideal, but it's the best we can do with C ABI. Another issue is that the notion of trait would disappear completely,
