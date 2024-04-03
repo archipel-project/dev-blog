@@ -119,7 +119,7 @@ preventing us from doing any possible abstraction in our code.
 Both Rust and C ABI allow to get a reference over any object passed by the core. It means we can iterate over components from our ECS without **any** copy! This is an excellent point, a allow us to write very efficient plugins.
 But as shown above, this also means a nightmare for us and plugins developers to implement anything.
 
-# Third thought: WASM? Is this worth it?
+# Fourth thought: WASM? Is this worth it?
 
 WebAssembly is a new kind of bytecode, designed to be close from native performances, but way more portable. We can compare it a more minimalist version of the Java or C# bytecode, without a garbage collector.
 WASM runs in browsers when tasks require performances where JavaScript is too slow, or in a dedicated runtime like Wasmtime or Wasmer.
@@ -146,7 +146,7 @@ during entity query, which also come with a big performance cost.
 
 Again, this is a big no for us.
 
-# Fourth thought: speaking of bytecode, what about Java?
+# Fifth thought: speaking of bytecode, what about Java?
 
 Java (or any alternative running on the JVM like Kotlin) is one of the most popular language today, and used to create Minecraft. It provides good speeds, portability,
 and the targeted community already used it
