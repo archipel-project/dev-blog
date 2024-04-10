@@ -101,7 +101,7 @@ As you can see, this is a big no since it doesn't comply at all to our needs.
 # Third thought: what about C ABI?
 
 C ABI is the most stable ABI ever, it's the ABI used by both C and C++ languages. It's also the ABI used by the Rust language when using the `extern` [specifier](https://doc.rust-lang.org/reference/items/external-blocks.html).
-Obviously, the solution is similar to the precedent, but using stable ABIs (such as C ABI or the system's one) solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
+Obviously, the solution is similar to the precedent, but using stable ABI (such as C ABI or the system's one) solves maybe problems related to the ABI stability, like being constrained to use the same compiler, version or flags.
 
 But, this also does come with a trade-off: even more unsafe and boilerplate code! To map everything to the C ABI, we would need to use a lot of unsafe code, and in consequence use a lot of boilerplate
 code to map Rust types and functions to their C equivalents. This is far from being ideal, but it's the best we can do with C ABI. Another issue is that the notion of trait would disappear completely,
@@ -119,7 +119,7 @@ preventing us from doing any possible abstraction in our code.
 Both Rust and C ABI allow to get a reference over any object passed by the core. It means we can iterate over components from our ECS without **any** copy! This is an excellent point, a allow us to write very efficient plugins.
 But as shown above, this also means a nightmare for us and plugins developers to implement anything.
 
-# Third thought: WASM? Is this worth it?
+# Fourth thought: WASM? Is this worth it?
 
 WebAssembly is a new kind of bytecode, designed to be close from native performances, but way more portable. We can compare it a more minimalist version of the Java or C# bytecode, without a garbage collector.
 WASM runs in browsers when tasks require performances where JavaScript is too slow, or in a dedicated runtime like Wasmtime or Wasmer.
@@ -146,7 +146,7 @@ during entity query, which also come with a big performance cost.
 
 Again, this is a big no for us.
 
-# Fourth thought: speaking of bytecode, what about Java?
+# Fifth thought: speaking of bytecode, what about Java?
 
 Java (or any alternative running on the JVM like Kotlin) is one of the most popular language today, and used to create Minecraft. It provides good speeds, portability,
 and the targeted community already used it
